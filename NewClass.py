@@ -1,5 +1,13 @@
+import pygame
+
+class Bullet:
+def __init__(self, coord):
+    self.coord = coord
+def Move (self, dy):
+    self.coord[1] += dy    
+
 class Hero:     #создает класс персонажа (и доброго, и злого)
-    def __init__(self, coord, health, max_health, is_good, Images, is_alive = True, is_protected = False):    #координаты, здоровье, максимальное здоровье, добрый или злой (1 или 2),
+    def __init__(self, coord, max_health, is_good, Images, is_alive = True, is_protected = False):    #координаты, здоровье, максимальное здоровье, добрый или злой (True или False),
         self.coord = coord                                                                                    #живой ли, включен ли щит, ссылка на картинки
         self.health = max_health
         self.max_health = max_health
@@ -8,10 +16,8 @@ class Hero:     #создает класс персонажа (и доброго
         self.is_protected = False
         self.images = Images
         self.weapon = {"blaster" : 10,
-                       'shotgun' : 5,
                        'pg' : 1}
-        
-    def __del__(self):    #деструктор
+       def __del__(self):    #деструктор
         del self.coord
         del self.health
         del self.max_health
@@ -21,7 +27,7 @@ class Hero:     #создает класс персонажа (и доброго
         del self.images
         del self.weapon
     def is_main(self):    #проверка: добрый или злой
-        return self.is_good == 1
+        return is_good
     def blit_me(self, display_surface):    #рисует на экране
         if self.is_main == True:
             display_surface.blit(self.images[0],(self.coord[0],self.coord[1]))
@@ -50,20 +56,15 @@ class Hero:     #создает класс персонажа (и доброго
             else:
                 self.is_alive = False
                 #return self.is_alive
-    def Shoot (self, button):    #выстрел
-        if button == '1':
+    def Shoot (self, keys)   #выстрел
+        if keys[pygame.K_1]:
             curr_weapon = self.weapon['blaster']
-        if button == '2':
-            curr_weapon = self.weapon['shotgun']
-        if button == '3':
+        if keys[pygame.K_2]:
             curr_weapon = self.weapon['pg']
-        return curr_weapon
+        tmp = Bullet(self.coord)
+        return (tmp, curr_weapon)
     def Shield (self):    #щит
         self.is_protected = True
         #return self.is_protected
     
-class Bullet:
-    def __init__(self, coord):
-        self.coord = coord
-    def Move (self, dy):
-        self.coord[1] += dy
+
