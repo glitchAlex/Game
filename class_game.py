@@ -51,6 +51,10 @@ class Hero:     #создает класс персонажа (и доброго
     def Distruction(self):    #уничтожение
         self.is_alive = False
         #return self.is_alive
+    def Ishit(self,P):
+        print(self.coord)
+        print(P.coord)
+        return(abs(self.coord[0]-P.coord[0])<35 and abs(self.coord[1]+35-P.coord[1])<35)
     def Status(self):    #текущий статус
         return self.is_alive
     def Move (self, dx, dy):    #перемещение
