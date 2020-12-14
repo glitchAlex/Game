@@ -5,8 +5,16 @@ class Bullet:
     def __init__(self, coord, vec):
         self.coord = coord.copy()
         self.vec=vec
+    def __del__(self):
+        del self.coord
+        del self.vec
     def Move (self, dy):
-        self.coord[1] += self.vec*dy    
+        self.coord[1] += self.vec*dy
+    def is_in(self):
+        if (800-self.coord[0])*self.coord[0] >0 and (600-self.coord[1])*self.coord[1] >0:
+            return True
+        else:
+            return False
 
 class Hero:     #создает класс персонажа (и доброго, и злого)
     def __init__(self, coord, max_health, is_good, Images, is_alive = True, is_protected = False):    #координаты, здоровье, максимальное здоровье, добрый или злой (True или False),
@@ -17,7 +25,7 @@ class Hero:     #создает класс персонажа (и доброго
         self.is_alive = True
         self.is_protected = False
         self.images = Images
-        self.weapon = {"blaster" : 50,
+        self.weapon = {"blaster" : 30,
                        'pg' : 5}
     def __del__(self):    #деструктор
         del self.coord
@@ -32,10 +40,12 @@ class Hero:     #создает класс персонажа (и доброго
         return self.is_good
     def blit_me(self, display_surface, offset):    #рисует на экране
         if self.is_alive:
+            output = self.coord.copy()
+            output[0]-=35
             if self.is_main():
-                display_surface.blit(self.images[0],self.coord+offset)
+                display_surface.blit(self.images[0],output+offset)
             else:
-                display_surface.blit(self.images[1],self.coord+offset)
+                display_surface.blit(self.images[1],output+offset)
         else:
             pass
     def Distruction(self):    #уничтожение
