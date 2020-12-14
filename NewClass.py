@@ -65,7 +65,7 @@ class Hero:     #создает класс персонажа (и доброго
         if keys[pygame.K_2]:
             curr_weapon = self.weapon['pg']
         tmp = Bullet(self.coord)
-        return (tmp, curr_weapon)
+        return [tmp, curr_weapon]
     def Shield (self):    #щит
         self.is_protected = True
         #return self.is_protected
