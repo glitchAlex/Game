@@ -66,8 +66,11 @@ class Hero:     #создает класс персонажа (и доброго
             curr_weapon = self.weapon['pg']
         tmp = Bullet(self.coord)
         return [tmp, curr_weapon]
-    def Shield (self):    #щит
-        self.is_protected = True
+    def Shield (self, modeOn=False):    #щит
+        if modeOn:
+            self.is_protected = True
+        else:
+            self.is_protected = False
         #return self.is_protected
     
 
