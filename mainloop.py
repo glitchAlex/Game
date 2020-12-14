@@ -22,12 +22,12 @@ background_rects = [pg.Rect(randrange(-3000, 3001), randrange(-3000, 3001), 20, 
 run = True
 delay = 20
 all_sprites = pg.sprite.Group()
-player = Hero([400,300],5,True, Images, is_protected=True)
+player = Hero([400.0,300.0],5,True, Images, is_protected=True)
 cdPlayerShoot = 0
 cdPlayerShield = 0
 enemies = []
-testenemy = Hero([400,200], 1, True, Images)
-enemies.append(testenemy)
+randal = Hero([400.0,100.0], 1, False, Images)
+enemies.append(randal)
 cdEnemies = []
 cdEnemies.append(0)
 bullets = []
@@ -47,12 +47,20 @@ while run:
     #player actions
     if keys[pg.K_a]: #moving left
         player.Move(-speed,0)
+        for npc in enemies:
+            npc.Move(-speed,0)
     if keys[pg.K_d]: #moving right
         player.Move(speed,0)
+        for npc in enemies:
+            npc.Move(speed,0)
     if keys[pg.K_s]: #moving down
         player.Move(0,speed)
+        for npc in enemies:
+            npc.Move(0,speed)
     if keys[pg.K_w]: #moving up
         player.Move(0,-speed)
+        for npc in enemies:
+            npc.Move(0,-speed)
     if keys[pg.K_SPACE]: #shielding
         player.Shield(modeOn=True)
     if (keys[pg.K_q] or keys[pg.K_e]) and (cdPlayerShoot == 0): #shooting
@@ -61,27 +69,43 @@ while run:
         cdPlayerShoot = tmp[1]
     
     #object and enemy proccessing
-    #enemy loop
-    #print(cdPlayerShoot)
+    for bull in bullets[:]: #hitting enemies
+        hit = False
+        for npc in enemies:
+            if npc.Ishit(bull, offset):
+                npc.Damage()
+                hit = True
+        if hit:
+            bullets.remove(bull)
+    for npc in enemies[:]: #removing dead enemies
+        if not npc.Status():
+            enemies.remove(npc)
+            npc.__del__()
+    #here make enemies to circle around
     if cdPlayerShoot > 0: #cd shoot proccesings
         cdPlayerShoot-=1
-    for bull in bullets:
+    for bull in bullets: #bullets move
         bull.Move(5)
+    for bull in bullets[:]: #bullets delete
+        if not bull.is_in():
+            bullets.remove(bull)
+            bull.__del__()
     
-    #print(bullets)
     #printing
+    #print(bullets)
+    #print(enemies)
     win.blit(bg,(0,0))
-    for i in range(len(bullets)):
-        #print(bullets[i].coord)
+    for i in range(len(bullets)): #print bullets
         pg.draw.circle(win, (0,255,0), bullets[i].coord, 5)
         pg.draw.circle(win, (255,255,255), bullets[i].coord, 3)
         pg.draw.circle(win, (0,0,0), bullets[i].coord, 1)
-    for background_rect in background_rects:
+    for background_rect in background_rects: #print rocks
             topleft = background_rect.topleft + offset
             pg.draw.rect(win, (200, 50, 70), (topleft, background_rect.size))
     clock.tick(60)
-    #pygame.draw.rect(win, (255,255,255), (0, 0, 80, 60)) #useless line
     player.blit_me(win, offset)
+    for npc in enemies:
+        npc.blit_me(win,offset)
     pg.display.update()
     
 pg.quit()
