@@ -17,15 +17,16 @@ class Bullet:
             return False
 
 class Hero:     #создает класс персонажа (и доброго, и злого)
-    def __init__(self, coord, max_health, is_good, Images, is_alive = True, is_protected = False):    #координаты, здоровье, максимальное здоровье, добрый или злой (True или False),
+    def __init__(self, coord, max_health, is_good, Images, is_alive = True, is_critical = False, is_protected = False):    #координаты, здоровье, максимальное здоровье, добрый или злой (True или False),
         self.coord = coord                                                                                    #живой ли, включен ли щит, ссылка на картинки
         self.health = max_health
         self.max_health = max_health
         self.is_good = is_good
         self.is_alive = True
+        self.is_critical = False
         self.is_protected = False
         self.images = Images
-        self.weapon = {"blaster" : 30,
+        self.weapon = {"blaster" : 50,
                        'pg' : 5}
     def __del__(self):    #деструктор
         del self.coord
@@ -47,14 +48,11 @@ class Hero:     #создает класс персонажа (и доброго
             else:
                 display_surface.blit(self.images[1],output+offset)
         else:
-            pass
+            if self.is_critical:
+                display_surface.blit(self.images[2],output+offset)
     def Distruction(self):    #уничтожение
         self.is_alive = False
         #return self.is_alive
-    def Ishit(self,P):
-        print(self.coord)
-        print(P.coord)
-        return(abs(self.coord[0]-P.coord[0])<35 and abs(self.coord[1]+35-P.coord[1])<35)
     def Status(self):    #текущий статус
         return self.is_alive
     def Move (self, dx, dy):    #перемещение
@@ -68,6 +66,8 @@ class Hero:     #создает класс персонажа (и доброго
         self.coord[0]+=dx
         self.coord[1]+=dy
         '''
+    def Ishit(self,P, offset):
+        return(abs(self.coord[0]-(P.coord[0]-offset[0]))<35 and abs(self.coord[1]+35-(P.coord[1]-offset[1]))<35)
     def Doctor (self):    #использование аптечки
         if self.health < self.max_health:
             self.health += 1
@@ -79,6 +79,7 @@ class Hero:     #создает класс персонажа (и доброго
                 #return self.health
             else:
                 self.is_alive = False
+                self.is_critical = True
                 #return self.is_alive
     def Shoot (self, keys, offset):   #выстрел
         if keys[pygame.K_e]:
@@ -102,3 +103,4 @@ class Hero:     #создает класс персонажа (и доброго
         else:
             self.is_protected = False
         #return self.is_protected
+       
