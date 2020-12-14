@@ -66,15 +66,21 @@ class Hero:     #создает класс персонажа (и доброго
             else:
                 self.is_alive = False
                 #return self.is_alive
-    def Shoot (self, keys):   #выстрел
+    def Shoot (self, keys, offset):   #выстрел
         if keys[pygame.K_e]:
             curr_weapon = self.weapon['blaster']
         if keys[pygame.K_q]:
             curr_weapon = self.weapon['pg']
         if self.is_main():
-            tmp = Bullet(self.coord, -1)
+            output = self.coord.copy()
+            output[0]+=offset[0]
+            output[1]+=offset[1]
+            tmp = Bullet(output, -1)
         else:
-            tmp = Bullet(self.coord, 1)
+            output = self.coord.copy()
+            output[0]+=offset[0]
+            output[1]+=offset[1]
+            tmp = Bullet(output, 1)
         return [tmp, curr_weapon]
     def Shield (self, modeOn=False):    #щит
         if modeOn:
