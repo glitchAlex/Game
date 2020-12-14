@@ -42,7 +42,7 @@ class Hero:     #создает класс персонажа (и доброго
     def Status(self):    #текущий статус
         return self.is_alive
     def Move (self, dx, dy):    #перемещение
-        if (self.coord[0]+dx>0)&(self.coord[0]+dx<500):
+        if (self.coord[0]+dx>-50)&(self.coord[0]+dx<500-50):
             self.coord[0] += dx
         if (self.coord[1]+dy>0)&(self.coord[1]+dy<780):
             self.coord[1] += dy
