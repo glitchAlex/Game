@@ -25,23 +25,22 @@ background_rects = [pg.Rect(randrange(-3000, 3001), randrange(-3000, 3001), 20, 
 run = True
 delay = 20
 all_sprites = pg.sprite.Group()
-player = Hero([400.0,300.0],5,True, Images)
+player = Hero([400.0,300.0],3,True, Images)
 cdPlayerShoot = 0
 cdPlayerShield = 15000
 enemies = []
 cdEnemies = []
-step = []
+step_crit = []
 randal = Hero([400.0,100.0], 1, False, Images) #randal setting
 enemies.append(randal) #randal setting
 cdEnemies.append(0) #randal setting
-step.append(0) #randal setting
+step_crit.append(0) #randal setting
 bullets = []
 speed = 10
 delay_counter = 0
 while run:
     pg.time.delay(delay)
     delay_counter+=delay
-    print(delay_counter)
 
     for event in pg.event.get():
         if event.type == pg.QUIT: #quiting game via close button
@@ -89,15 +88,23 @@ while run:
     for bull in bullets[:]: #hitting enemies
         hit = False
         for npc in enemies:
-            if npc.Ishit(bull, offset):
+            if npc.Ishit(bull, offset) and bull.vec == -1:
                 npc.Damage()
                 hit = True
+        if hit:
+            bullets.remove(bull)
+    for bull in bullets[:]: #hitting player
+        hit = False
+        if player.Ishit(bull, offset) and bull.vec == 1:
+            player.Damage()
+            hit = True
         if hit:
             bullets.remove(bull)
     for npc in enemies[:]: #removing dead enemies
         if (not npc.Status()) and (not npc.StatusCrit()):
             enemies.remove(npc)
             npc.__del__()
+    
     for npc in enemies: #buzzing?
         if delay_counter%(2*4*delay) == 0*delay:
             npc.Move(-speed,0)
@@ -119,13 +126,12 @@ while run:
         if not bull.is_in():
             bullets.remove(bull)
             bull.__del__()
-    #print(delay_counter)
-    if delay_counter%10*delay == 0: #shooting enemy
-        print('cool')
+    if delay_counter%1500 == 0: #shooting enemy
+        #print('cool')
         for npc in enemies:
-            print('cooler')
-            tmp = npc.Shoot(keys, offset)
-            bullets.append(tmp[0])
+            if npc.Status():
+                tmp = npc.Shoot(keys, offset)
+                bullets.append(tmp[0])
     
     #printing
     #print(bullets)
@@ -144,6 +150,10 @@ while run:
     player.blit_me(win, offset)
     for npc in enemies:
         npc.blit_me(win,offset)
+    pygame.draw.rect(win, (255,255,255), (800 - 65, 600 - 65, 50, 50)) #shield cd
+    pygame.draw.rect(win, (0,102,204), (800 - 16 - 48, 600 - 16 - 48*(cdPlayerShield/15000), 48, 48*(cdPlayerShield/15000)))
+    pygame.draw.rect(win, (255,255,255), (800 - 121, 600 - 65, 50, 50)) #shoot cd?
+    pygame.draw.rect(win, (0,204,0), (800 - 72 - 48, 600 - 16 - 48*(10/10), 48, 48*(10/10)))
     pg.display.update()
     
 pg.quit()
