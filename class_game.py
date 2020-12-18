@@ -34,17 +34,20 @@ class Hero:     #создает класс персонажа (и доброго
         del self.max_health
         del self.is_good
         del self.is_alive
+        del self.is_critical
         del self.is_protected
         del self.images
         del self.weapon
     def is_main(self):    #проверка: добрый или злой
         return self.is_good
     def blit_me(self, display_surface, offset):    #рисует на экране
+        output = self.coord.copy()
+        output[0]-=35
         if self.is_alive:
-            output = self.coord.copy()
-            output[0]-=35
             if self.is_main():
                 display_surface.blit(self.images[0],output+offset)
+                if self.is_protected:
+                    display_surface.blit(self.images[3],output+offset)
             else:
                 display_surface.blit(self.images[1],output+offset)
         else:
@@ -52,9 +55,12 @@ class Hero:     #создает класс персонажа (и доброго
                 display_surface.blit(self.images[2],output+offset)
     def Distruction(self):    #уничтожение
         self.is_alive = False
+        self.is_critical = True
         #return self.is_alive
     def Status(self):    #текущий статус
         return self.is_alive
+    def StatusCrit(self):    #текущий статус
+        return self.is_critical
     def Move (self, dx, dy):    #перемещение
         #wip
         if (self.coord[0]+dx>-3100)&(self.coord[0]+dx<3101):
@@ -92,9 +98,10 @@ class Hero:     #создает класс персонажа (и доброго
             output[1]+=offset[1]
             tmp = Bullet(output, -1)
         else:
+            curr_weapon = self.weapon['blaster']
             output = self.coord.copy()
             output[0]+=offset[0]
-            output[1]+=offset[1]
+            output[1]+=offset[1] + 100
             tmp = Bullet(output, 1)
         return [tmp, curr_weapon]
     def Shield (self, modeOn=False):    #щит
@@ -103,4 +110,3 @@ class Hero:     #создает класс персонажа (и доброго
         else:
             self.is_protected = False
         #return self.is_protected
-       
